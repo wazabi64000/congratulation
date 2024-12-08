@@ -1,0 +1,20 @@
+body {
+    background-color: #f7f9fb;
+  }
+  
+  .card {
+    border-radius: 8px;
+  }
+  
+  input[type="text"] {
+    border-radius: 5px;
+  }
+  
+  button {
+    border-radius: 5px;
+  }
+  
+  h4 {
+    margin-bottom: 15px;
+  }
+  

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salon de Chat</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="row mt-5">
+      <div class="col-12">
+        <h2 class="text-center mb-4">Salon de Chat</h2>
+
+        <!-- Afficher le podium des derniers utilisateurs -->
+        <h4>Podium des Derniers Connexions :</h4>
+        <ul class="list-group">
+          <% connections.forEach((connection, index) => { %>
+            <li class="list-group-item">
+              <strong><%= connection.name %></strong> (<%= connection.promo %>) - <%= moment(connection.connected_at).format('LLLL') %>
+            </li>
+          <% }) %>
+        </ul>
+
+        <!-- Le chat en temps réel -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5>Bienvenue dans le chat !</h5>
+          </div>
+          <div class="card-body">
+            <div id="messages" class="border p-3" style="height: 300px; overflow-y: scroll;">
+              <!-- Les messages seront ajoutés ici -->
+            </div>
+            <input type="text" id="message" class="form-control mt-3" placeholder="Écrivez un message...">
+            <button id="sendMessage" class="btn btn-primary w-100 mt-2">Envoyer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const messagesDiv = document.getElementById('messages');
+    const messageInput = document.getElementById('message');
+    const sendMessageButton = document.getElementById('sendMessage');
+
+    // Recevoir les messages du serveur
+    socket.on('chat message', (data) => {
+      const messageElement = document.createElement('div');
+      messageElement.textContent = data.message;
+      messagesDiv.appendChild(messageElement);
+
+      // Faire défiler les messages
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+
+    // Envoyer un message
+    sendMessageButton.addEventListener('click', () => {
+      const message = messageInput.value.trim();
+      if (message) {
+        socket.emit('chat message', { message });
+        messageInput.value = ''; // Effacer l'input
+      }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
